@@ -18,21 +18,19 @@ namespace AirlineReservation.Tests.Test.Controller
         {
             var mockAirlinesService = new Mock<IAirlineService>();
             var mockAirlines = _fixture.Create<List<AirlineModel>>();
-            mockAirlinesService.Setup(service => service.getAllAirlines()).ReturnsAsync(mockAirlines);
+            mockAirlinesService.Setup(service => service.GetAllAirlines()).ReturnsAsync(mockAirlines);
 
             var airlineController = new AirlineController(mockAirlinesService.Object);
             var result = await airlineController.GetAllAirlines();
 
-            mockAirlinesService.Verify(service => service.getAllAirlines(), Times.Once);
+            mockAirlinesService.Verify(service => service.GetAllAirlines(), Times.Once);
 
             result
                 .Should().BeOfType<OkObjectResult>().Which.Value.Should()
                 .BeOfType<List<AirlineModel>>().And.Subject.As<List<AirlineModel>>()
                 .Should().BeEquivalentTo(mockAirlines);
 
-            result
-                .Should().BeOfType<OkObjectResult>().Which.StatusCode.Should()
-                .Be(StatusCodes.Status200OK);
+            result.Should().BeOfType<OkObjectResult>();
         }
 
     }

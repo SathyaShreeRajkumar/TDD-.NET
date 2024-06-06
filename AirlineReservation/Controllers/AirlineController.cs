@@ -17,7 +17,7 @@ namespace AirlineReservation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllAirlines()
         {
-            var airlines = await _airlineService.getAllAirlines();
+            var airlines = await _airlineService.GetAllAirlines();
             return Ok(airlines);
         }
     }

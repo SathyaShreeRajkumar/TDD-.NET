@@ -1,7 +1,6 @@
 using MongoDB.Driver;
 using AirlineReservation.Models.Configuration;
 using AirlineReservation.Services.Airline;
-using AirlineReservation.Utils;
 using AirlineReservation.Services.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +13,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IAirlineService, AirlineService>();
 builder.Services.AddSingleton<IDatabaseContext, DatabaseContext>();
-builder.Services.AddAutoMapper(typeof(AutoMapping));
 builder.Services.Configure<AirlineDataBaseSettings>(builder.Configuration.GetSection("ConnectionStrings"));
 builder.Services.AddSingleton<IMongoClient>(_ =>
 {

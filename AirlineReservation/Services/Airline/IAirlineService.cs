@@ -4,6 +4,6 @@ namespace AirlineReservation.Services.Airline
 {
     public interface IAirlineService
     {
-        Task<List<AirlineModel>> getAllAirlines();
+        Task<List<AirlineModel>> GetAllAirlines();
     }
 }
