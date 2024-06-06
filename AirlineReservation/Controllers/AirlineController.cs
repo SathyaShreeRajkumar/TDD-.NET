@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AirlineReservation.Controllers
 {
-    [Route("api")]
+    [Route("api/airlines")]
     [ApiController]
     public class AirlineController : ControllerBase
     {
@@ -14,7 +14,7 @@ namespace AirlineReservation.Controllers
             _airlineService = airlineService;
         }
 
-        [HttpGet("getAllAirline")]
+        [HttpGet]
         public async Task<IActionResult> GetAllAirlines()
         {
             var airlines = await _airlineService.getAllAirlines();
