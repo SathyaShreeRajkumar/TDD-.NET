@@ -1,9 +1,9 @@
-﻿using Airline_Reservation.Models.Data;
+﻿using AirlineReservation.Models.Data;
 using AirlineReservation.Services.Database;
 using AutoMapper;
 using MongoDB.Driver;
 
-namespace Airline_Reservation.Services.Airline
+namespace AirlineReservation.Services.Airline
 {
     public class AirlineService : IAirlineService
     {

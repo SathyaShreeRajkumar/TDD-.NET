@@ -1,5 +1,5 @@
-﻿using Airline_Reservation.Models.Configuration;
-using Airline_Reservation.Models.Data;
+﻿using AirlineReservation.Models.Configuration;
+using AirlineReservation.Models.Data;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 

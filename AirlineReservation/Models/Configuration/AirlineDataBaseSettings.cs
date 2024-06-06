@@ -1,4 +1,4 @@
-﻿namespace Airline_Reservation.Models.Configuration
+﻿namespace AirlineReservation.Models.Configuration
 {
     public class AirlineDataBaseSettings
     {

@@ -1,9 +1,9 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Airline_Reservation.Models.Data
+namespace AirlineReservation.Models.Data
 {
-    public class AirlineModel
+    public record AirlineModel
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

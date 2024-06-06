@@ -1,5 +1,5 @@
-﻿using Airline_Reservation.Models.Api;
-using Airline_Reservation.Models.Data;
+﻿using AirlineReservation.Models.Api;
+using AirlineReservation.Models.Data;
 using AutoMapper;
 
 namespace AirlineReservation.Utils

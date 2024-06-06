@@ -1,6 +1,6 @@
-﻿namespace Airline_Reservation.Models.Api
+﻿namespace AirlineReservation.Models.Api
 {
-    public class AirlineDto
+    public record AirlineDto
     {
 
         public string Name { get; set; }

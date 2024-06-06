@@ -1,6 +1,5 @@
-﻿using Airline_Reservation.Services.Airline;
+﻿using AirlineReservation.Services.Airline;
 using Microsoft.AspNetCore.Mvc;
-using AirlineReservation.Constants;
 
 namespace AirlineReservation.Controllers
 {

@@ -2,20 +2,10 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/AirlineReservation/FileContentIndex/a694aec7-1600-4d80-8664-1dc3101ae6c9.vsidx
-/.vs/AirlineReservation/FileContentIndex/f4fc2a03-6127-4fc2-89aa-06e56c6ce1a6.vsidx
-/.vs/AirlineReservation/DesignTimeBuild/.dtbcache.v2
-/.vs/AirlineReservation/v17/.futdcache.v2
-/.vs/AirlineReservation/v17/.suo
-/.vs/ProjectEvaluation/airlinereservation.metadata.v8.bin
-/.vs/AirlineReservation/v17/DocumentLayout.json
-/.vs/ProjectEvaluation/airlinereservation.projects.v8.bin
-/.vs/ProjectEvaluation/airlinereservation.strings.v8.bin
-/.vs/TDD-.NET/FileContentIndex/9ef29afa-f1cb-4781-a6ad-a564881bc8de.vsidx
-/.vs/slnx.sqlite
-/.vs/TDD-.NET/v17/.wsuo
-/.vs/TDD-.NET/v17/DocumentLayout.json
-/.vs/VSWorkspaceState.json
-/.vs
-/AirlineReservation
-/AirlineReservation.Tests
+*.suo
+*.user
+_ReSharper.*
+bin
+obj
+packages
+/.vs/

@@ -1,6 +1,6 @@
 using MongoDB.Driver;
-using Airline_Reservation.Models.Configuration;
-using Airline_Reservation.Services.Airline;
+using AirlineReservation.Models.Configuration;
+using AirlineReservation.Services.Airline;
 using AirlineReservation.Utils;
 using AirlineReservation.Services.Database;
 

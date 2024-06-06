@@ -1,5 +1,5 @@
 ﻿using MongoDB.Driver;
-using Airline_Reservation.Models.Data;
+using AirlineReservation.Models.Data;
 
 namespace AirlineReservation.Services.Database
 {

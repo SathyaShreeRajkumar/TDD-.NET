@@ -1,11 +1,9 @@
-﻿using Airline_Reservation.Models.Api;
-using Airline_Reservation.Models.Data;
+﻿using AirlineReservation.Models.Data;
 
-namespace Airline_Reservation.Services.Airline
+namespace AirlineReservation.Services.Airline
 {
     public interface IAirlineService
     {
-
         Task<List<AirlineModel>> getAllAirlines();
     }
 }
