@@ -23,14 +23,47 @@ namespace AirlineReservation.Tests.Test.Controller
             var airlineController = new AirlineController(mockAirlinesService.Object);
             var result = await airlineController.GetAllAirlines();
 
-            mockAirlinesService.Verify(service => service.GetAllAirlines(), Times.Once);
+            mockAirlinesService.Verify(service => service.GetAllAirlines(), Times.Once());
 
             result
                 .Should().BeOfType<OkObjectResult>().Which.Value.Should()
                 .BeOfType<List<AirlineModel>>().And.Subject.As<List<AirlineModel>>()
                 .Should().BeEquivalentTo(mockAirlines);
+        }
 
-            result.Should().BeOfType<OkObjectResult>();
+        [Fact]
+        public async Task ShouldReturnOn_GetAirlineById_AndStatusAs200()
+        {
+            var mockAirlinesService = new Mock<IAirlineService>();
+            var mockAirline = _fixture.Create<AirlineModel>();
+            var mockId = _fixture.Create<string>();
+
+            mockAirlinesService.Setup(service => service.GetAirlineById(mockId)).ReturnsAsync(mockAirline);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.GetAirlineById(mockId);
+
+            mockAirlinesService.Verify(service => service.GetAirlineById(mockId), Times.Once());
+
+            result
+                .Should().BeOfType<OkObjectResult>().Which.Value.Should().Be(mockAirline);
+        }
+
+        [Fact]
+        public async Task ShouldReturnOn_AirlineNotFoundForId_AndStatusAs404()
+        {
+            var mockAirlinesService = new Mock<IAirlineService>();
+            var mockId = _fixture.Create<string>();
+
+            mockAirlinesService.Setup(service => service.GetAirlineById(mockId))
+                           .ReturnsAsync(null as AirlineModel);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.GetAirlineById(mockId);
+
+            mockAirlinesService.Verify(service => service.GetAirlineById(mockId), Times.Once());
+
+            result.Should().BeOfType<NotFoundResult>();
         }
 
     }

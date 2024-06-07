@@ -12,9 +12,15 @@ namespace AirlineReservation.Services.Airline
         {
             _databaseContext = databaseContext;
         }
+
         public async Task<List<AirlineModel>> GetAllAirlines()
         {
             return await _databaseContext.Airlines.Find(airline => true).ToListAsync();
+        }
+
+        public async Task<AirlineModel> GetAirlineById(string airlineId)
+        {
+            return await _databaseContext.Airlines.Find(airline => airline.AirlineId == airlineId).FirstOrDefaultAsync(); 
         }
     }
 }

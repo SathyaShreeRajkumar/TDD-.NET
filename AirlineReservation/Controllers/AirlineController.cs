@@ -20,5 +20,12 @@ namespace AirlineReservation.Controllers
             var airlines = await _airlineService.GetAllAirlines();
             return Ok(airlines);
         }
+
+        [HttpGet("/{airlineId}")]
+        public async Task<IActionResult> GetAirlineById(string airlineId)
+        {
+            var airline = await _airlineService.GetAirlineById(airlineId);
+            return airline == null ? NotFound() : Ok(airline);
+        }
     }
 }
