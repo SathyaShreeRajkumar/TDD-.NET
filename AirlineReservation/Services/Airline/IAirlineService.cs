@@ -1,4 +1,5 @@
-﻿using AirlineReservation.Models.Data;
+﻿using AirlineReservation.Models.Api;
+using AirlineReservation.Models.Data;
 
 namespace AirlineReservation.Services.Airline
 {
@@ -7,5 +8,9 @@ namespace AirlineReservation.Services.Airline
         Task<List<AirlineModel>> GetAllAirlines();
 
         Task<AirlineModel> GetAirlineById(string id);
+
+        Task<AirlineModel> CreateAirline(AirlineDto airline);
+
+        Task<long> DeleteAirline(string id);
     }
 }
