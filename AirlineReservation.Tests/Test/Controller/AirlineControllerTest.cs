@@ -3,9 +3,9 @@ using AirlineReservation.Services.Airline;
 using AirlineReservation.Controllers;
 using AutoFixture;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using AirlineReservation.Models.Api;
 
 namespace AirlineReservation.Tests.Test.Controller
 {
@@ -23,15 +23,153 @@ namespace AirlineReservation.Tests.Test.Controller
             var airlineController = new AirlineController(mockAirlinesService.Object);
             var result = await airlineController.GetAllAirlines();
 
-            mockAirlinesService.Verify(service => service.GetAllAirlines(), Times.Once);
+            mockAirlinesService.Verify(service => service.GetAllAirlines(), Times.Once());
 
-            result
-                .Should().BeOfType<OkObjectResult>().Which.Value.Should()
-                .BeOfType<List<AirlineModel>>().And.Subject.As<List<AirlineModel>>()
-                .Should().BeEquivalentTo(mockAirlines);
+            result.Should().BeOfType<OkObjectResult>()
+                .Which.Value.Should().BeEquivalentTo(mockAirlines);
+        }
+
+        [Fact]
+        public async Task ShouldReturnOn_GetAirlineById_AndStatusAs200()
+        {
+            var mockAirlinesService = new Mock<IAirlineService>();
+            var mockAirline = _fixture.Create<AirlineModel>();
+            var mockId = _fixture.Create<string>();
+
+            mockAirlinesService.Setup(service => service.GetAirlineById(mockId)).ReturnsAsync(mockAirline);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.GetAirlineById(mockId);
+
+            mockAirlinesService.Verify(service => service.GetAirlineById(mockId), Times.Once());
+
+            result.Should().BeOfType<OkObjectResult>()
+                .Which.Value.Should().BeEquivalentTo(mockAirline);
+        }
+
+        [Fact]
+        public async Task ShouldReturnOn_AirlineNotFoundForId_AndStatusAs404()
+        {
+            var mockAirlinesService = new Mock<IAirlineService>();
+            var mockId = _fixture.Create<string>();
+
+            mockAirlinesService.Setup(service => service.GetAirlineById(mockId))
+                           .ReturnsAsync(null as AirlineModel);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.GetAirlineById(mockId);
+
+            mockAirlinesService.Verify(service => service.GetAirlineById(mockId), Times.Once());
+
+            result.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public async Task ShouldReturnOn_CreateAirlineObject_AndStatusAs201()
+        {
+            var mockAirline = _fixture.Create<AirlineModel>();
+            var mockAirlineDto = _fixture.Create<AirlineDto>();
+            var mockAirlinesService = new Mock<IAirlineService>();
+
+            mockAirlinesService.Setup(service => service.CreateAirline(mockAirlineDto))
+                               .ReturnsAsync(mockAirline);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.CreateAirline(mockAirlineDto);
+
+            mockAirlinesService.Verify(service => service.CreateAirline(mockAirlineDto), Times.Once());
+
+            result.Should().BeOfType<CreatedAtActionResult>()
+                    .Which.Value.Should().BeEquivalentTo(mockAirline);
+        }
+
+        [Fact]
+        public async Task ShouldReturnOn_InvalidObject_AndStatusAs404()
+        {
+            var mockAirline = _fixture.Create<AirlineModel>();
+            var mockAirlineDto = _fixture.Create<AirlineDto>();
+            var mockAirlinesService = new Mock<IAirlineService>();
+
+            mockAirlinesService.Setup(service => service.CreateAirline(mockAirlineDto))
+                             .ReturnsAsync(null as AirlineModel);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.CreateAirline(mockAirlineDto);
+
+            mockAirlinesService.Verify(service => service.CreateAirline(mockAirlineDto), Times.Once());
+
+            result.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact]
+        public async Task ShouldReturnOn_DeleteAirline_AndStatusAs200()
+        {
+            var mockAirlineId = _fixture.Create<string>();
+            var mockAirlinesService = new Mock<IAirlineService>();
+
+            mockAirlinesService.Setup(service => service.DeleteAirline(mockAirlineId)).ReturnsAsync(10);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.DeleteAirline(mockAirlineId);
+
+            mockAirlinesService.Verify(service => service.DeleteAirline(mockAirlineId), Times.Once());
 
             result.Should().BeOfType<OkObjectResult>();
         }
 
+        [Fact]
+        public async Task ShouldReturnOn_IdNotFoundForDelete_AndStatusAs404()
+        {
+            var mockAirlineId = _fixture.Create<string>();
+            var mockAirlinesService = new Mock<IAirlineService>();
+
+            mockAirlinesService.Setup(service => service.DeleteAirline(mockAirlineId)).ReturnsAsync(0);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.DeleteAirline(mockAirlineId);
+
+            mockAirlinesService.Verify(service => service.DeleteAirline(mockAirlineId), Times.Once());
+
+            result.Should().BeOfType<NotFoundResult>();
+        }
+
+        [Fact] 
+        public async Task ShouldReturnOn_UpdateAirlineObject_AndStatusAs202()
+        {
+            var mockAirlineId = _fixture.Create<string>();
+            var mockAirlinesService = new Mock<IAirlineService>();
+            var mockAirlineDto = _fixture.Create<AirlineDto>();
+            var mockAirline = _fixture.Create<AirlineModel>();
+
+            mockAirlinesService.Setup(service => service.UpdateAirline(mockAirlineId,mockAirlineDto))
+                             .ReturnsAsync(mockAirline);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.UpdateAirline(mockAirlineId, mockAirlineDto);
+
+            mockAirlinesService.Verify(service => service.UpdateAirline(mockAirlineId, mockAirlineDto), Times.Once());
+
+            result.Should().BeOfType<AcceptedAtActionResult>()
+                    .Which.Value.Should().BeEquivalentTo(mockAirline);
+
+        }
+
+        [Fact]
+        public async Task ShouldReturnNotFoundWhen_IdNotFoundForUpdate()
+        {
+            var mockAirlineId = _fixture.Create<string>();
+            var mockAirlineDto = _fixture.Create<AirlineDto>();
+            var mockAirlinesService = new Mock<IAirlineService>();
+
+            mockAirlinesService.Setup(service => service.UpdateAirline(mockAirlineId, mockAirlineDto))
+                .ReturnsAsync(null as AirlineModel);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+
+            var result = await airlineController.UpdateAirline(mockAirlineId, mockAirlineDto);
+
+            mockAirlinesService.Verify(service => service.UpdateAirline(mockAirlineId, mockAirlineDto), Times.Once());
+            Assert.IsType<NotFoundResult>(result);
+        }
     }
 }
