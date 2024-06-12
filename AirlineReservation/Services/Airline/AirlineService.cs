@@ -36,6 +36,16 @@ namespace AirlineReservation.Services.Airline
             return airlineData;
         }
 
+        public async Task<AirlineModel> UpdateAirline(string id,AirlineDto airlineDto)
+        {
+            var airlineData = await _databaseContext.Airlines.Find(airline => airline.AirlineId == id).FirstOrDefaultAsync();
+            _mapper.Map(airlineDto , airlineData);
+
+            var result = await _databaseContext.Airlines.ReplaceOneAsync(airline => airline.AirlineId == id, airlineData);
+
+            return airlineData;
+        }
+
         public async Task<long> DeleteAirline(string airlineId)
         {
             var airline = await _databaseContext.Airlines.DeleteOneAsync(airline => airline.AirlineId == airlineId);
