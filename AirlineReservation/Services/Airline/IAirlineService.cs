@@ -11,8 +11,6 @@ namespace AirlineReservation.Services.Airline
 
         Task<AirlineModel> CreateAirline(AirlineDto airline);
 
-        Task<AirlineModel> UpdateAirline(string id, AirlineDto airline);
-
         Task<long> DeleteAirline(string id);
     }
 }

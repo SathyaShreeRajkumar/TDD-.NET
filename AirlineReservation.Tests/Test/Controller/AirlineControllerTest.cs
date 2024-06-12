@@ -25,8 +25,9 @@ namespace AirlineReservation.Tests.Test.Controller
 
             mockAirlinesService.Verify(service => service.GetAllAirlines(), Times.Once());
 
-            result.Should().BeOfType<OkObjectResult>()
-                .Which.Value.Should().BeEquivalentTo(mockAirlines);
+            result
+                .Should().BeOfType<OkObjectResult>().Which.Value
+                .Should().BeEquivalentTo(mockAirlines);
         }
 
         [Fact]
@@ -43,8 +44,8 @@ namespace AirlineReservation.Tests.Test.Controller
 
             mockAirlinesService.Verify(service => service.GetAirlineById(mockId), Times.Once());
 
-            result.Should().BeOfType<OkObjectResult>()
-                .Which.Value.Should().BeEquivalentTo(mockAirline);
+            result
+                .Should().BeOfType<OkObjectResult>().Which.Value.Should().Be(mockAirline);
         }
 
         [Fact]
@@ -65,7 +66,7 @@ namespace AirlineReservation.Tests.Test.Controller
         }
 
         [Fact]
-        public async Task ShouldReturnOn_CreateAirlineObject_AndStatusAs201()
+        public async Task ShouldReturnOn_CreationOfAirlineObject_AndStatusAs201()
         {
             var mockAirline = _fixture.Create<AirlineModel>();
             var mockAirlineDto = _fixture.Create<AirlineDto>();
@@ -79,8 +80,9 @@ namespace AirlineReservation.Tests.Test.Controller
 
             mockAirlinesService.Verify(service => service.CreateAirline(mockAirlineDto), Times.Once());
 
-            result.Should().BeOfType<CreatedAtActionResult>()
-                    .Which.Value.Should().BeEquivalentTo(mockAirline);
+            result
+                .Should().BeOfType<CreatedAtActionResult>().Which.Value.Should()
+                .Be(mockAirline);
         }
 
         [Fact]
@@ -133,47 +135,5 @@ namespace AirlineReservation.Tests.Test.Controller
             result.Should().BeOfType<NotFoundResult>();
         }
 
-        [Fact] 
-        public async Task ShouldReturnOn_UpdateAirlineObject_AndStatusAs202()
-        {
-            var mockAirlineId = _fixture.Create<string>();
-            var mockAirlinesService = new Mock<IAirlineService>();
-            var mockAirlineDto = _fixture.Create<AirlineDto>();
-            var mockAirline = _fixture.Create<AirlineModel>();
-
-            mockAirlinesService.Setup(service => service.UpdateAirline(mockAirlineId,mockAirlineDto))
-                             .ReturnsAsync(mockAirline);
-
-            var airlineController = new AirlineController(mockAirlinesService.Object);
-            var result = await airlineController.UpdateAirline(mockAirlineId, mockAirlineDto);
-
-            mockAirlinesService.Verify(service => service.UpdateAirline(mockAirlineId, mockAirlineDto), Times.Once());
-
-            result.Should().BeOfType<AcceptedAtActionResult>()
-                    .Which.Value.Should().BeEquivalentTo(mockAirline);
-
-        }
-
-        [Fact]
-        public async Task ShouldReturnNotFoundWhen_IdNotFoundForUpdate()
-        {
-            // Arrange
-            var mockAirlineId = _fixture.Create<string>();
-            var mockAirlineDto = _fixture.Create<AirlineDto>();
-            var mockAirlinesService = new Mock<IAirlineService>();
-
-            // Simulate the service returning null when the airline ID is not found
-            mockAirlinesService.Setup(service => service.UpdateAirline(mockAirlineId, mockAirlineDto))
-                .ReturnsAsync((AirlineModel)null);
-
-            var airlineController = new AirlineController(mockAirlinesService.Object);
-
-            // Act
-            var result = await airlineController.UpdateAirline(mockAirlineId, mockAirlineDto);
-
-            // Assert
-            mockAirlinesService.Verify(service => service.UpdateAirline(mockAirlineId, mockAirlineDto), Times.Once());
-            Assert.IsType<NotFoundResult>(result);
-        }
     }
 }

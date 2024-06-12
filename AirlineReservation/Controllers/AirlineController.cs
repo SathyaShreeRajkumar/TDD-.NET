@@ -37,14 +37,6 @@ namespace AirlineReservation.Controllers
             new { id = createAirline.AirlineId }, createAirline);
         }
 
-        [HttpPut("/{airlineId}")]
-        public async Task<IActionResult> UpdateAirline(string id, AirlineDto airlineDto)
-        {
-            var airline = await _airlineService.UpdateAirline(id, airlineDto);
-            return id == null ? NotFound() : AcceptedAtAction(nameof(UpdateAirline),
-            new { id = airline.AirlineId }, airline);
-        }
-
         [HttpDelete]
         public async Task<IActionResult> DeleteAirline(string airlineId)
         {
