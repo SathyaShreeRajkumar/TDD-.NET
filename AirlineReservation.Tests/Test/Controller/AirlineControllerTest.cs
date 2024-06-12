@@ -157,21 +157,17 @@ namespace AirlineReservation.Tests.Test.Controller
         [Fact]
         public async Task ShouldReturnNotFoundWhen_IdNotFoundForUpdate()
         {
-            // Arrange
             var mockAirlineId = _fixture.Create<string>();
             var mockAirlineDto = _fixture.Create<AirlineDto>();
             var mockAirlinesService = new Mock<IAirlineService>();
 
-            // Simulate the service returning null when the airline ID is not found
             mockAirlinesService.Setup(service => service.UpdateAirline(mockAirlineId, mockAirlineDto))
-                .ReturnsAsync((AirlineModel)null);
+                .ReturnsAsync(null as AirlineModel);
 
             var airlineController = new AirlineController(mockAirlinesService.Object);
 
-            // Act
             var result = await airlineController.UpdateAirline(mockAirlineId, mockAirlineDto);
 
-            // Assert
             mockAirlinesService.Verify(service => service.UpdateAirline(mockAirlineId, mockAirlineDto), Times.Once());
             Assert.IsType<NotFoundResult>(result);
         }
