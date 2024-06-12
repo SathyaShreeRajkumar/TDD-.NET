@@ -117,5 +117,47 @@ namespace AirlineReservation.Tests.Test.Services
             mockCollection.Verify(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<AirlineModel>>(), default), Times.Once());
             Assert.Equal(message, result);
         }
+
+        [Fact]
+        public async Task UpdateAirline_ShouldReturn_UpdatedAirline()
+        {
+            var mockId = _fixture.Create<string>();
+            var mockAirlineDto = _fixture.Create<AirlineDto>();
+            var mockAirline = _fixture.Create<AirlineModel>();
+            mockAirline.AirlineId = mockId;
+
+            var mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
+            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
+
+            mockCursor.SetupSequence(_ => _.MoveNextAsync(It.IsAny<CancellationToken>()))
+                      .ReturnsAsync(true)
+                      .ReturnsAsync(false);
+            mockCursor.Setup(_ => _.Current).Returns(new List<AirlineModel> { mockAirline });
+
+            mockCollection.Setup(x => x.FindAsync(
+                It.IsAny<FilterDefinition<AirlineModel>>(),
+                It.IsAny<FindOptions<AirlineModel, AirlineModel>>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(mockCursor.Object);
+
+            mockCollection.Setup(x => x.ReplaceOneAsync(
+                It.IsAny<FilterDefinition<AirlineModel>>(),
+                It.IsAny<AirlineModel>(),
+                It.IsAny<ReplaceOptions>(),
+                It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new ReplaceOneResult.Acknowledged(1, 1, null));
+
+            _mockDataBaseContext.Setup(database => database.Airlines)
+                                .Returns(mockCollection.Object);
+
+            _mockMapper.Setup(mapper => mapper.Map(mockAirlineDto, mockAirline));
+
+            var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
+
+            var result = await airlineService.UpdateAirline(mockId, mockAirlineDto);
+
+            result.Should().BeEquivalentTo(mockAirline);
+        }
+
     }
 }
