@@ -51,5 +51,17 @@ namespace AirlineReservation.Services.Airline
             var airline = await _databaseContext.Airlines.DeleteOneAsync(airline => airline.AirlineId == airlineId);
             return airline.DeletedCount;
         }
+        
+        public async Task<List<AirlineModel>> SearchByBoarding(string boarding)
+        {
+            var airline = Builders<AirlineModel>.Filter.Eq(a => a.Boarding, boarding);
+            return await _databaseContext.Airlines.Find(airline).ToListAsync();
+        }
+
+        public async Task<List<AirlineModel>> SearchByDestination(string destination)
+        {
+            var airline = Builders<AirlineModel>.Filter.Eq(a => a.Destination, destination);
+            return await _databaseContext.Airlines.Find(airline).ToListAsync();
+        }
     }
 }

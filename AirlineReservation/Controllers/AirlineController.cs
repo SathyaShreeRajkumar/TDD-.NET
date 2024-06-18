@@ -51,5 +51,19 @@ namespace AirlineReservation.Controllers
             var count = await _airlineService.DeleteAirline(airlineId);
             return count == 0 ? NotFound() : Ok(count);
         }
+
+        [HttpGet("/searchBoarding")]
+        public async Task<IActionResult> SearchAirlineByBoarding([FromQuery] string boarding)
+        {
+            var airline = await _airlineService.SearchByBoarding(boarding);
+            return boarding == null ? NotFound() : Ok(airline);
+        }
+
+        [HttpGet("/searchDestination")]
+        public async Task<IActionResult> SearchAirlineByDestination([FromQuery] string destination)
+        {
+            var airline = await _airlineService.SearchByDestination(destination);
+            return destination == null ? NotFound() : Ok(airline);
+        }
     }
 }
