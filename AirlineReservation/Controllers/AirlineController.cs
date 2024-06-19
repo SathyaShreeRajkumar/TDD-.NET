@@ -65,5 +65,12 @@ namespace AirlineReservation.Controllers
             var airline = await _airlineService.SearchByDestination(destination);
             return destination == null ? NotFound() : Ok(airline);
         }
+
+        [HttpGet("/searchAirline")]
+        public async Task<IActionResult> SearchByAirline([FromQuery] string name)
+        {
+            var airline = await _airlineService.SearchByAirline(name);
+            return name == null ? NotFound() : Ok(airline);
+        }
     }
 }

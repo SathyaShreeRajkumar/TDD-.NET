@@ -18,5 +18,7 @@ namespace AirlineReservation.Services.Airline
         Task<List<AirlineModel>> SearchByBoarding(string boarding);
 
         Task<List<AirlineModel>> SearchByDestination(string destination);
+
+        Task<List<AirlineModel>> SearchByAirline(string name);
     }
 }

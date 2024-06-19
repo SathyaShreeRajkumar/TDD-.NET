@@ -241,5 +241,40 @@ namespace AirlineReservation.Tests.Test.Controller
 
             result.Should().BeOfType<NotFoundResult>();
         }
+
+        [Fact]
+        public async Task ShouldReturnOn_SearchAirlineObject_AndStatusAs200()
+        {
+            var mockAirlinesService = new Mock<IAirlineService>();
+            var mockAirline = _fixture.Create<List<AirlineModel>>();
+            var mockAirlineName = _fixture.Create<string>();
+
+            mockAirlinesService.Setup(service => service.SearchByAirline(mockAirlineName)).ReturnsAsync(mockAirline);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.SearchByAirline(mockAirlineName);
+
+            mockAirlinesService.Verify(service => service.SearchByAirline(mockAirlineName), Times.Once());
+
+            result.Should().BeOfType<OkObjectResult>()
+                .Which.Value.Should().BeEquivalentTo(mockAirline);
+        }
+
+        [Fact]
+        public async Task ShouldReturnOn_InvalidAirlineSearch_AndStatus404()
+        {
+            var mockAirlinesService = new Mock<IAirlineService>();
+            var mockAirline = _fixture.Create<List<AirlineModel>>();
+            string? invalidAirline = null;
+
+            mockAirlinesService.Setup(service => service.SearchByAirline(invalidAirline)).ReturnsAsync(null as List<AirlineModel>);
+
+            var airlineController = new AirlineController(mockAirlinesService.Object);
+            var result = await airlineController.SearchByAirline(invalidAirline);
+
+            mockAirlinesService.Verify(service => service.SearchByAirline(invalidAirline), Times.Once());
+
+            result.Should().BeOfType<NotFoundResult>();
+        }
     }
 }

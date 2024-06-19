@@ -63,5 +63,13 @@ namespace AirlineReservation.Services.Airline
             var airline = Builders<AirlineModel>.Filter.Eq(a => a.Destination, destination);
             return await _databaseContext.Airlines.Find(airline).ToListAsync();
         }
+
+        public async Task<List<AirlineModel>> SearchByAirline(string name)
+        {
+            var airline = Builders<AirlineModel>.Filter.Eq(a => a.Name, name);
+            return await _databaseContext.Airlines.Find(airline).ToListAsync();
+        }
+
+
     }
 }
