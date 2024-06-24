@@ -54,12 +54,14 @@ namespace AirlineReservation.Controllers
             return count == 0 ? NotFound() : Ok(count);
         }
 
-        [HttpGet("/search")]
+        [HttpGet]
+        [Route("search")]
         public async Task<IActionResult> SearchAirlines([FromQuery] string? boarding, [FromQuery] string? destination, [FromQuery] string? name)
         {
             var airlines = await _airlineService.SearchAirline(boarding, destination, name);
             return airlines == null ? NotFound() : Ok(airlines);
         }
 
+ 
     }
 }
