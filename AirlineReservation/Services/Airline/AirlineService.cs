@@ -56,33 +56,24 @@ namespace AirlineReservation.Services.Airline
         {
             var allAirlines = await _databaseContext.Airlines.Find(airline => true).ToListAsync();
 
-            Console.WriteLine($"Total airlines before filtering: {allAirlines.Count}");
-
             var query = allAirlines.AsQueryable();
 
             if (!string.IsNullOrEmpty(boarding))
             {
                 query = query.Where(a => a.Boarding.ToLower().Contains(boarding.ToLower()));
-                Console.WriteLine($"Filtered by boarding '{boarding}', count: {query.Count()}");
             }
 
             if (!string.IsNullOrEmpty(destination))
             {
                 query = query.Where(a => a.Destination.ToLower().Contains(destination.ToLower()));
-                Console.WriteLine($"Filtered by destination '{destination}', count: {query.Count()}");
             }
 
             if (!string.IsNullOrEmpty(name))
             {
                 query = query.Where(a => a.Name.ToLower().Contains(name.ToLower()));
-                Console.WriteLine($"Filtered by name '{name}', count: {query.Count()}");
             }
 
-            var result = query.ToList();
-            Console.WriteLine($"Total airlines after filtering: {result.Count}");
-
-            return result;
+            return query.ToList();
         }
-
     }
 }
