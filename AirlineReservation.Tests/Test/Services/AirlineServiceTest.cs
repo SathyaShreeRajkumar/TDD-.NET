@@ -14,33 +14,35 @@ namespace AirlineReservation.Tests.Test.Services
     {
         private readonly Mock<IMapper> _mockMapper;
         private readonly Mock<IDatabaseContext> _mockDataBaseContext;
+        private readonly Mock<IMongoCollection<AirlineModel>> _mockCollection;
+        private readonly Mock<IAsyncCursor<AirlineModel>> _mockCursor;
         private readonly Fixture _fixture = new Fixture();
 
         public AirlineServiceTest()
         {
             _mockMapper = new Mock<IMapper>();
             _mockDataBaseContext = new Mock<IDatabaseContext>();
+            _mockCollection = new Mock<IMongoCollection<AirlineModel>>();
+            _mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
         }
 
         [Fact]
         public async Task GetAllAirlines_ReturnsListOfAirlines()
         {
             var mockAirlines = _fixture.CreateMany<AirlineModel>();
-            var mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
 
-            mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
+           _mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
                 .ReturnsAsync(true)
                 .ReturnsAsync(false);
-            mockCursor.Setup(_ => _.Current).Returns(mockAirlines);
+            _mockCursor.Setup(_ => _.Current).Returns(mockAirlines);
 
-            mockCollection.Setup(collection => collection.FindAsync(
+            _mockCollection.Setup(collection => collection.FindAsync(
                 It.IsAny<FilterDefinition<AirlineModel>>(),
                 It.IsAny<FindOptions<AirlineModel, AirlineModel>>(),
                 default))
-                .ReturnsAsync(mockCursor.Object);
+                .ReturnsAsync(_mockCursor.Object);
 
-            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(mockCollection.Object);
+            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(_mockCollection.Object);
 
             var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
 
@@ -53,22 +55,20 @@ namespace AirlineReservation.Tests.Test.Services
         public async Task GetAirlineById_ReturnsAirline_ByTheId()
         {
             var mockAirlines = _fixture.Create<AirlineModel>();
-            var mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
             var mockId = _fixture.Create<string>();
 
-            mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
+            _mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
                 .ReturnsAsync(true)
                 .ReturnsAsync(false);
-            mockCursor.Setup(_ => _.Current).Returns(new List<AirlineModel> { mockAirlines });
+            _mockCursor.Setup(_ => _.Current).Returns(new List<AirlineModel> { mockAirlines });
 
-            mockCollection.Setup(collection => collection.FindAsync(
+            _mockCollection.Setup(collection => collection.FindAsync(
                 It.IsAny<FilterDefinition<AirlineModel>>(),
                 It.IsAny<FindOptions<AirlineModel, AirlineModel>>(),
                 default))
-                .ReturnsAsync(mockCursor.Object);
+                .ReturnsAsync(_mockCursor.Object);
 
-            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(mockCollection.Object);
+            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(_mockCollection.Object);
 
             var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
 
@@ -82,17 +82,16 @@ namespace AirlineReservation.Tests.Test.Services
         {
             var mockAirineDto = _fixture.Create<AirlineDto>();
             var mockAirlines = _fixture.Create<AirlineModel>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
 
             _mockMapper.Setup(mapper => mapper.Map<AirlineModel>(mockAirineDto)).Returns(mockAirlines);
-            _mockDataBaseContext.Setup(database => database.Airlines).Returns(mockCollection.Object);
-            mockCollection.Setup(collection => collection.InsertOneAsync(mockAirlines, null, default))
+            _mockDataBaseContext.Setup(database => database.Airlines).Returns(_mockCollection.Object);
+            _mockCollection.Setup(collection => collection.InsertOneAsync(mockAirlines, null, default))
                   .Returns(Task.CompletedTask);
 
             var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
             var result = await airlineService.CreateAirline(mockAirineDto);
 
-            mockCollection.Verify(collection => collection.InsertOneAsync(mockAirlines, null, default), Times.Once());
+            _mockCollection.Verify(collection => collection.InsertOneAsync(mockAirlines, null, default), Times.Once());
 
             result.Should().BeEquivalentTo(mockAirlines);
         }
@@ -102,19 +101,18 @@ namespace AirlineReservation.Tests.Test.Services
         {
             var message = _fixture.Create<int>();
             var mockId = _fixture.Create<string>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
 
-            _mockDataBaseContext.Setup(database => database.Airlines).Returns(mockCollection.Object);
+            _mockDataBaseContext.Setup(database => database.Airlines).Returns(_mockCollection.Object);
 
             var deleteResult = new DeleteResult.Acknowledged(message);
-            mockCollection.Setup(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<AirlineModel>>(), default))
+            _mockCollection.Setup(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<AirlineModel>>(), default))
                           .ReturnsAsync(deleteResult);
 
             var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
 
             var result = await airlineService.DeleteAirline(mockId);
 
-            mockCollection.Verify(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<AirlineModel>>(), default), Times.Once());
+            _mockCollection.Verify(collection => collection.DeleteOneAsync(It.IsAny<FilterDefinition<AirlineModel>>(), default), Times.Once());
             Assert.Equal(message, result);
         }
 
@@ -126,21 +124,19 @@ namespace AirlineReservation.Tests.Test.Services
             var mockAirline = _fixture.Create<AirlineModel>();
             mockAirline.AirlineId =mockId;
 
-            var mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
 
-            mockCursor.SetupSequence(_ => _.MoveNextAsync(It.IsAny<CancellationToken>()))
+            _mockCursor.SetupSequence(_ => _.MoveNextAsync(It.IsAny<CancellationToken>()))
                       .ReturnsAsync(true)
                       .ReturnsAsync(false);
-            mockCursor.Setup(_ => _.Current).Returns(new List<AirlineModel> { mockAirline });
+            _mockCursor.Setup(_ => _.Current).Returns(new List<AirlineModel> { mockAirline });
 
-            mockCollection.Setup(x => x.FindAsync(
+            _mockCollection.Setup(x => x.FindAsync(
                 It.IsAny<FilterDefinition<AirlineModel>>(),
                 It.IsAny<FindOptions<AirlineModel, AirlineModel>>(),
                 It.IsAny<CancellationToken>()))
-                .ReturnsAsync(mockCursor.Object);
+                .ReturnsAsync(_mockCursor.Object);
 
-            mockCollection.Setup(x => x.ReplaceOneAsync(
+            _mockCollection.Setup(x => x.ReplaceOneAsync(
                 It.IsAny<FilterDefinition<AirlineModel>>(),
                 It.IsAny<AirlineModel>(),
                 It.IsAny<ReplaceOptions>(),
@@ -148,7 +144,7 @@ namespace AirlineReservation.Tests.Test.Services
                 .ReturnsAsync(new ReplaceOneResult.Acknowledged(1, 1, null));
 
             _mockDataBaseContext.Setup(database => database.Airlines)
-                                .Returns(mockCollection.Object);
+                                .Returns(_mockCollection.Object);
 
             _mockMapper.Setup(mapper => mapper.Map(mockAirlineDto, mockAirline));
 
@@ -159,86 +155,31 @@ namespace AirlineReservation.Tests.Test.Services
             result.Should().BeEquivalentTo(mockAirline);
         }
 
-        [Fact]
-        public async Task SearchByBoarding_ReturnsAirlines()
-        {
-            var mockAirlines = _fixture.CreateMany<AirlineModel>();
-            var mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
-            var mockBoarding = _fixture.Create<string>();
-
-            mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
-                .ReturnsAsync(true)
-                .ReturnsAsync(false);
-            mockCursor.Setup(_ => _.Current).Returns(mockAirlines);
-
-            mockCollection.Setup(collection => collection.FindAsync(
-                It.IsAny<FilterDefinition<AirlineModel>>(),
-                It.IsAny<FindOptions<AirlineModel, AirlineModel>>(),
-                default))
-                .ReturnsAsync(mockCursor.Object);
-
-            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(mockCollection.Object);
-
-            var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
-
-            var result = await airlineService.SearchByBoarding(mockBoarding);
-
-            result.Should().BeEquivalentTo(mockAirlines);
-        }
-
-        [Fact]
-        public async Task SearchByDestination_ReturnsAirlines()
-        {
-            var mockAirlines = _fixture.CreateMany<AirlineModel>();
-            var mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
-            var mockDestination = _fixture.Create<string>();
-
-            mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
-                .ReturnsAsync(true)
-                .ReturnsAsync(false);
-            mockCursor.Setup(_ => _.Current).Returns(mockAirlines);
-
-            mockCollection.Setup(collection => collection.FindAsync(
-                It.IsAny<FilterDefinition<AirlineModel>>(),
-                It.IsAny<FindOptions<AirlineModel, AirlineModel>>(),
-                default))
-                .ReturnsAsync(mockCursor.Object);
-
-            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(mockCollection.Object);
-
-            var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
-
-            var result = await airlineService.SearchByBoarding(mockDestination);
-
-            result.Should().BeEquivalentTo(mockAirlines);
-        }
 
         [Fact]
         public async Task SearchByAirline_ReturnsAirlines()
         {
             var mockAirlines = _fixture.CreateMany<AirlineModel>();
-            var mockCursor = new Mock<IAsyncCursor<AirlineModel>>();
-            var mockCollection = new Mock<IMongoCollection<AirlineModel>>();
-            var mockAirlineName = _fixture.Create<string>();
+            var mockName = mockAirlines.First().Name;
+            var mockBoarding = mockAirlines.First().Boarding;
+            var mockDestination = mockAirlines.First().Destination;
 
-            mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
+            _mockCursor.SetupSequence(_ => _.MoveNextAsync(default))
                 .ReturnsAsync(true)
                 .ReturnsAsync(false);
-            mockCursor.Setup(_ => _.Current).Returns(mockAirlines);
+            _mockCursor.Setup(_ => _.Current).Returns(mockAirlines);
 
-            mockCollection.Setup(collection => collection.FindAsync(
+            _mockCollection.Setup(collection => collection.FindAsync(
                 It.IsAny<FilterDefinition<AirlineModel>>(),
                 It.IsAny<FindOptions<AirlineModel, AirlineModel>>(),
                 default))
-                .ReturnsAsync(mockCursor.Object);
+                .ReturnsAsync(_mockCursor.Object);
 
-            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(mockCollection.Object);
+            _mockDataBaseContext.Setup(airline => airline.Airlines).Returns(_mockCollection.Object);
 
             var airlineService = new AirlineService(_mockMapper.Object, _mockDataBaseContext.Object);
 
-            var result = await airlineService.SearchByAirline(mockAirlineName);
+            var result = await airlineService.SearchAirline(mockName,mockBoarding,mockDestination);
 
             result.Should().BeEquivalentTo(mockAirlines);
         }

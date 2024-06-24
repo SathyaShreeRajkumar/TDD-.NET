@@ -51,25 +51,38 @@ namespace AirlineReservation.Services.Airline
             var airline = await _databaseContext.Airlines.DeleteOneAsync(airline => airline.AirlineId == airlineId);
             return airline.DeletedCount;
         }
-        
-        public async Task<List<AirlineModel>> SearchByBoarding(string boarding)
-        {
-            var airline = Builders<AirlineModel>.Filter.Eq(a => a.Boarding, boarding);
-            return await _databaseContext.Airlines.Find(airline).ToListAsync();
-        }
 
-        public async Task<List<AirlineModel>> SearchByDestination(string destination)
+        public async Task<List<AirlineModel>> SearchAirline(string boarding, string destination, string name)
         {
-            var airline = Builders<AirlineModel>.Filter.Eq(a => a.Destination, destination);
-            return await _databaseContext.Airlines.Find(airline).ToListAsync();
-        }
+            var allAirlines = await _databaseContext.Airlines.Find(airline => true).ToListAsync();
 
-        public async Task<List<AirlineModel>> SearchByAirline(string name)
-        {
-            var airline = Builders<AirlineModel>.Filter.Eq(a => a.Name, name);
-            return await _databaseContext.Airlines.Find(airline).ToListAsync();
-        }
+            Console.WriteLine($"Total airlines before filtering: {allAirlines.Count}");
 
+            var query = allAirlines.AsQueryable();
+
+            if (!string.IsNullOrEmpty(boarding))
+            {
+                query = query.Where(a => a.Boarding.ToLower().Contains(boarding.ToLower()));
+                Console.WriteLine($"Filtered by boarding '{boarding}', count: {query.Count()}");
+            }
+
+            if (!string.IsNullOrEmpty(destination))
+            {
+                query = query.Where(a => a.Destination.ToLower().Contains(destination.ToLower()));
+                Console.WriteLine($"Filtered by destination '{destination}', count: {query.Count()}");
+            }
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(a => a.Name.ToLower().Contains(name.ToLower()));
+                Console.WriteLine($"Filtered by name '{name}', count: {query.Count()}");
+            }
+
+            var result = query.ToList();
+            Console.WriteLine($"Total airlines after filtering: {result.Count}");
+
+            return result;
+        }
 
     }
 }

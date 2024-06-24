@@ -15,10 +15,7 @@ namespace AirlineReservation.Services.Airline
 
         Task<long> DeleteAirline(string id);
 
-        Task<List<AirlineModel>> SearchByBoarding(string boarding);
+        Task<List<AirlineModel>> SearchAirline(string boarding,string destination,string name);
 
-        Task<List<AirlineModel>> SearchByDestination(string destination);
-
-        Task<List<AirlineModel>> SearchByAirline(string name);
     }
 }
