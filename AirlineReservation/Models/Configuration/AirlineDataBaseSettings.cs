@@ -4,6 +4,7 @@
     {
         public string ConnectionUrl { get; set; }
         public string DatabaseName { get; set; }
-        public string CollectionName { get; set; }
+        public string AirlineCollectionName { get; set; }
+        public string UserCollectionName { get; set; }
     }
 }
