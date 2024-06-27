@@ -6,5 +6,7 @@ namespace AirlineReservation.Services.Database
     public interface IDatabaseContext
     {
         IMongoCollection<AirlineModel> Airlines { get; }
+
+        IMongoCollection<UserModel> Users { get; }
     }
 }
